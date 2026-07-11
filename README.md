@@ -2,7 +2,7 @@
 
 ## Phase 1: Establishing the Control Rooms & Access Boundaries
 
-### The Plain-Talk Reality
+### The Plain-Talk Reality 
 Before touching a single script, you have to separate your management tools. You are dealing with two entirely different administrative spaces: the **Identity Control Center** where digital entities get identity cards and background checks, and the **Infrastructure Control Room** where real enterprise data assets exist. Blurring these two together is why most deployments fail; you must know exactly which console governs which object.
 
 ### The Universal Blueprint: Decoupling Identity from Infrastructure
