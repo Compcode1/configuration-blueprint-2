@@ -47,10 +47,6 @@ The universal relationship established in Phase 1 always moves through three dis
 2. **Declaration of the Target Perimeter:** You locate and isolate the specific sub-boundary or logical container within the infrastructure environment (the subscription, account, project, or namespace) where the resource lives.
 3. **Coordinate Extraction for Core Alignment:** You extract the precise cross-platform tenant and scope variables. This creates the foundational network and logical alignment required before any cryptographic handshake or permission assignment can be attempted.
 
-   ### Foundational Architectural Flowchart: Control Room Boundaries
-
-This text-based model maps the absolute separation of the two primary administrative spaces and the directional flow of coordinates required to align them:
-
 +-----------------------------------------------------------------------+
 |                 IDENTITY CONTROL CENTER (Immutable)                   |
 |                      [Microsoft Entra ID Tenant]                      |
@@ -77,7 +73,7 @@ This text-based model maps the absolute separation of the two primary administra
 |  * Enforces localized Data-Plane Access Control (RBAC/IAM)            |
 |  * Target Variable: Target Scope ID ------------------/              |
 +-----------------------------------------------------------------------+
-
+  
 ## Phase 2: Generating Identity Credentials & Digital Coordinates
 
 ### The Plain-Talk Reality
