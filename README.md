@@ -122,36 +122,40 @@ The engineer must explicitly define the source boundaries of the external ecosys
 
 
 
----
-
-## Phase 4: Granting Resource Access & Pipeline Execution
+## Phase 4: Data-Plane Access Enforcement & Federated Pipeline Execution
 
 ### The Plain-Talk Reality
-An identity card is useless if you aren't allowed past the front door of the building. Once the automated bot has a validated identity and a passwordless handshake, you must explicitly grant that identity permission to interact with your target data or resource. Finally, you execute the workload script that tells the runner how to present its OIDC identity card, swap it for a short-lived cloud access token, and securely transact data without leaking it to the public logs.
+An identity card is useless if you aren't allowed past the front door of the building. Once the automated bot has a validated identity and a passwordless handshake, you must explicitly grant that identity permission to interact with your target data or resource. Finally, you execute the workload script that tells the runner how to present its OIDC identity card, swap it for a short-lived cloud access token, and securely transact data without leaking the data-plane trace to the public logs.
 
 ### The Global Execution Plane: Universal Data-Plane Transactions
 Once Microsoft Entra ID validates the federated OIDC trust link, the short-lived access token it issues is not locked exclusively to Microsoft infrastructure. In a globally integrated or hybrid enterprise environment, that same token can be presented to any platform that honors OAuth 2.0 or OpenID Connect—whether that is an AWS S3 bucket holding raw security logs, a Snowflake data warehouse, a Google Cloud BigQuery dataset, or a third-party vector database like Pinecone, Milvus, or Qdrant feeding an autonomous AI model. 
 
 The fundamental mechanism remains completely identical across all vendors: the external runner proves who it is through the identity center, receives a cryptographically signed credential, and immediately uses that credential to execute a secure data-plane transaction (`Get`, `Read`, `Write`) without ever exposing a static password.
 
-### The Concrete Configuration Steps
+### The Concrete Configuration Steps & Engineering Decision Branches
 
-#### 1. Assign Data-Plane Permissions at the Target Scope
-*   **System Path:** Target Infrastructure Console -> Target Resource -> Access Control (IAM / RBAC / Access Policies).
-*   **Architectural Action:** Assign a highly scoped, data-plane role to the Service Principal identity object.
-*   **The Blueprint Object:** Role-Based Access Control (RBAC) Assignment.
-*   **Architectural Function:** Authenticating to the identity provider only gets the bot through the perimeter. To execute a data-plane transaction (like reading a secret, writing an object, or querying a vector database), the bot's identity must be explicitly bound to a role containing exact data-plane actions (e.g., `Microsoft.KeyVault/vaults/secrets/getSecret/action` or AWS `s3:GetObject`).
+#### 1. Enforce Control-Plane vs. Data-Plane RBAC Isolation
+*   **System Path:** Target Infrastructure Console ➔ Target Resource ➔ Access Control (IAM/RBAC/Access Policies).
+*   **Architectural Action:** Assign a highly scoped, data-plane specific role directly to the local Service Principal identity object.
+*   **The Blueprint Object:** Role-Based Access Control (RBAC) Assignment Instance.
+*   **Architectural Logic & Naming Pitfall:** Authenticating to the identity directory only gets the bot through the outer perimeter. To execute a transaction, the identity must be bound to a role containing exact data-plane actions.
+    *   *The Architectural Constraint Branch:* In modern cloud architectures, **Control-Plane** permissions (e.g., Azure Contributor, AWS IAM Policy Changer) govern the *management* of infrastructure but explicitly do not grant access to the data inside them. 
+    *   *Engineering Mandate:* To read a secret or write to a database, you must explicitly bypass control-plane roles and assign strict **Data-Plane** roles (e.g., `Key Vault Secrets User` instead of `Reader`, or AWS `s3:GetObject` actions). Failing to understand this distinction causes immediate 403 Forbidden errors during execution, even though the authentication handshake succeeded with a 100% match.
 
-#### 2. Execute the Automated Workload Pipeline
-*   **System Path:** External Runner Platform -> Workflow Script / Container Configuration / AI Agent Runtime Execution Engine.
-*   **Architectural Action:** Trigger the automated execution code block populated with the three global coordinate variables.
+#### 2. Execute the Automated Workload Pipeline & Enforce Token Lifecycle Controls
+*   **System Path:** External Runner Platform ➔ Workflow Script / Container Configuration / AI Agent Runtime Execution Engine.
+*   **Architectural Action:** Trigger the automated execution code block populated with the three global coordinate variables harvested in Phases 1 and 2.
 *   **The Universal Execution Flow:**
     1.  **Token Request:** The workflow runner requests a cryptographically signed OIDC token from the external platform's internal token office.
-    2.  **Token Exchange:** The runner presents that external OIDC token to Microsoft Entra ID.
-    3.  **Trust Validation:** Entra ID validates the federated trust policy, performs a binary match on the Subject Claim, and returns a short-lived cloud **Access Token (AT)**.
+    2.  **Token Exchange:** The runner presents that external OIDC token assertion to the Microsoft Entra ID OAuth 2.0 token endpoint.
+    3.  **Trust Validation:** Entra ID validates the federated trust policy, executes a binary string match on the Subject Claim, and returns a short-lived **Access Token (AT)**.
     4.  **Data Transaction:** The runner presents that Access Token to the target infrastructure resource, extracts or writes the required payload, and automatically masks raw credential values in the console outputs (`***`) to protect the data plane trace from public visibility.
+*   **The Hard State Constraints:**
+    *   *Access Token (AT) State:* The exchanged Access Token is highly volatile and ephemeral, defaulting to an active lifespan of exactly **60 minutes**. 
+    *   *Refresh Token (RT) State:* Workload Identity Federation explicitly **does not issue a Refresh Token (RT)**. Because there is no persistent user session, there is no mechanism to silently refresh access. If an automated AI pipeline or data compilation job runs longer than 60 minutes, the runner must drop the expired token and execute a completely fresh OIDC exchange from step 1.
+    *   *The Telemetry Masking Trap:* While modern CI/CD systems automatically mask explicit secret variables, any raw data returned by a data-plane transaction (such as a database query or a raw file dump) printed to a verbose debug log bypasses automatic masking. The engineer must enforce strict output suppression in the runner's script to prevent structural telemetry data scraping.
 
----
+
 
 ## Universal Substitution Matrix
 
