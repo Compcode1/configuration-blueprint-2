@@ -157,13 +157,17 @@ The fundamental mechanism remains completely identical across all vendors: the e
 
 
 
-## Universal Substitution Matrix
+## Universal Substitution Matrix: Cross-Platform Component Mapping
 
-This matrix details the architectural components that can be natively swapped into this blueprint depending on your specific enterprise or AI design:
+This architectural matrix details the exact, inter-compatible data-plane and identity components that can be natively swapped into this zero-trust federation blueprint depending on your enterprise requirements.
 
-| Deployment Type | External Run Environment | Root Identity Center | Target Infrastructure / Data Plane |
-| :--- | :--- | :--- | :--- |
-| **CI/CD Pipelines** | GitHub Actions / GitLab CI / Azure Pipelines | Microsoft Entra ID | Azure Key Vault / AWS Secrets Manager / GCP Secret Manager |
-| **Container Clusters** | Kubernetes Pods / Amazon EKS / Google GKE | Microsoft Entra ID | Azure Blob Storage / Amazon S3 / Google Cloud Storage |
-| **Autonomous AI / ML** | LangChain Agents / AutoGPT / Hugging Face | Microsoft Entra ID | Pinecone / Milvus / Qdrant Vector Databases |
-| **Cloud Automation** | HashiCorp Vault / Terraform Cloud | Microsoft Entra ID | Snowflake / Databricks Data Platforms |
+| Deployment Topology | External Runtime Platform (OIDC Issuer) | Identity Provider Assertion Source | Root Identity Center (Target Principal) | Target Infrastructure Scope (Data-Plane) | Explicit Data-Plane Transaction |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Automated DevSecOps Pipelines** | GitHub Actions / GitLab CI / Azure Pipelines | External Token Service (`OIDC id_token`) | Microsoft Entra ID App Registration / Service Principal | Azure Key Vault / AWS Secrets Manager / GCP Secret Manager | `GetSecret` / `Decrypt` / `Retrieve` |
+| **Cloud Native Container Clusters** | Kubernetes Pods / Amazon EKS / Google GKE | Cluster API ServiceAccount Issuer (`ServiceAccountToken`) | Microsoft Entra ID App Registration / Service Principal | Azure Blob Storage / Amazon S3 / Google Cloud Storage | `PutObject` / `ReadBlock` / `DeleteBlob` |
+| **Autonomous AI / Production LLMs** | LangChain / AutoGPT Agents / Hugging Face Spaces | Native Compute Host OIDC Identity Provider | Microsoft Entra ID App Registration / Service Principal | Pinecone / Milvus / Qdrant Vector Databases | `VectorQuery` / `UpsertEmbeddings` |
+| **Multi-Cloud Data Automation** | HashiCorp Vault / Terraform Cloud / Pulumi | Vendor OIDC Token Authority | Microsoft Entra ID App Registration / Service Principal | Snowflake / Databricks Enterprise Data Platforms | `ExecuteStream` / `WriteTable` |
+
+### Architectural Matrix Logic
+1. **The Core Invariant:** Regardless of the row selected, the authentication mechanism remains 100% identical. The *External Runtime Platform* generates a short-lived JSON Web Token (JWT) assertion, which *Microsoft Entra ID* validates cryptographically against the configured `FederatedIdentityCredential` policy before issuing a 60-minute Access Token (AT).
+2. **The Security Boundary:** Every single target listed in the *Target Infrastructure Scope* must bypass control-plane management roles and utilize explicit data-plane role definitions to grant the service principal access to the underlying assets.
