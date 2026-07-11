@@ -47,34 +47,48 @@ The universal relationship established in Phase 1 always moves through three dis
 2. **Declaration of the Target Perimeter:** You locate and isolate the specific sub-boundary or logical container within the infrastructure environment (the subscription, account, project, or namespace) where the resource lives.
 3. **Coordinate Extraction for Core Alignment:** You extract the precise cross-platform tenant and scope variables. This creates the foundational network and logical alignment required before any cryptographic handshake or permission assignment can be attempted.
 
-
-
-  
-## Phase 2: Generating Identity Credentials & Digital Coordinates
+## Phase 2: Non-Human Identity Provisioning & Architectural Branching
 
 ### The Plain-Talk Reality
-An external automation engine, computational runner, or AI agent is a complete stranger to your cloud environment. To allow it in, you must create a digital representation of that runner inside your identity directory—essentially creating a "bot account." Once created, you must collect the exact matching coordinate strings so that your automation script knows precisely who it is claiming to be and where it needs to knock.
+An external automation engine, computational runner, or AI agent is a complete stranger to your cloud environment. To allow it in, you must create a digital representation of that runner inside your identity directory—essentially creating a "bot account." Once created, you must explicitly configure its structural boundary and collect its unique application identifier so that your automation script knows precisely who it is claiming to be when it requests access.
 
 ### The Identity Anchor: App Registrations as the Ground Truth for Autonomous AI
-In an enterprise dominated by a 45-to-1 ratio of non-human to human workloads, the application registration and its paired enterprise service principal are the absolute ground truth of an autonomous entity's digital existence. Unlike humans who possess innate identities verified by passports or biometrics, an AI agent, bot, or microservice possesses no identity other than the programmatic variables stamped onto its service principal inside Microsoft Entra ID. 
+In an enterprise dominated by a 45-to-1 ratio of non-human to human workloads, the application registration and its paired enterprise service principal are the absolute ground truth of an autonomous entity's digital existence. Unlike humans who possess innate identities verified by biometrics or legal documents, an AI agent, bot, or microservice possesses no identity other than the programmatic variables stamped onto its service principal inside Microsoft Entra ID.
 
-Because identity is the foundational prerequisite for all cybersecurity, the engineer who specializes in configuring these machine identities holds the keys to the entire cloud estate. If you lose granular control over the variables during configuration—such as failing to strictly bind the Subject Claim or misaligning Tenant and Infrastructure coordinates—you do not just cause a deployment failure; you create an unmonitored security void where an autonomous agent can be hijacked or impersonated. 
+Because identity is the foundational prerequisite for all cybersecurity, the engineer who specializes in configuring these machine identities holds the keys to the entire cloud estate. If you lose granular control over the variables during configuration—such as failing to strictly bind the Subject Claim or misaligning Tenant and Infrastructure coordinates—you do not just cause a deployment failure; you create an unmonitored security void where an autonomous agent can be hijacked or impersonated.
 
-### The Concrete Configuration Steps
+### The Concrete Configuration Steps & Engineering Decision Branches
 
-#### 1. Register the Non-Human Identity Object
-*   **System Path:** Entra Admin Center -> Identity -> Applications -> App registrations -> New registration.
+#### 1. Execute the Target Registration Path
+*   **System Path:** Entra Admin Center ➔ Identity ➔ Applications ➔ App registrations ➔ New registration.
 *   **Architectural Action:** Provision a new application identity object representing the automated workload or AI bot.
-*   **The Blueprint Object:** Application Object & Service Principal Object.
-*   **Architectural Function:** The Application Object acts as the global configuration blueprint for your bot, while Entra ID automatically generates a corresponding Service Principal object in your local tenant to act as the "security identity" that can be granted actual permissions.
-*   **Coordinate Captured:** **Application (client) ID**.
+*   **The Blueprint Objects:** Application Object & Service Principal Object.
+*   **Architectural Function:** The Application Object acts as the global template configuration for your bot, while Entra ID automatically generates a corresponding Service Principal object in your local tenant to act as the actual "security identity" that can be granted runtime permissions.
 
-#### 2. Extract the Cross-Platform Routing Coordinates
-*   **System Path A:** Entra Admin Center -> Identity -> Overview. Copy the **Directory (tenant) ID**.
-*   **System Path B:** Target Infrastructure Console -> Project/Account Settings -> Copy the **Target Scope ID** (e.g., Subscription ID, AWS Account ID, GCP Project ID).
-*   **Architectural Function:** Your external workload runner cannot route an authentication request into a vacuum; it requires the Tenant ID to locate your specific identity directory, and the Target Scope ID to locate your specific infrastructure cluster.
+#### 2. Evaluate and Select the Supported Account Type (The Security Perimeter Branch)
+During registration, the engineer must explicitly choose the structural isolation of the identity object based on the organizational tenancy boundary:
+*   **Choice A: Accounts in this organizational directory only (Single Tenant)**
+    *   *Engineering Mandate:* Select this option for standard corporate automation, localized GitHub Actions runners, or internal enterprise AI agents. This restricts the security principal’s operational boundary exclusively to your local tenant.
+*   **Choice B: Accounts in any organizational directory (Multitenant)**
+    *   *Engineering Mandate:* Select this option *only* if you are building a SaaS application, a shared multi-customer AI agent, or a cross-tenant service that must be registered in your directory but instantiated as an Enterprise Application inside external customer tenants. 
+    *   *Security Note:* Multitenant configurations drastically expand the identity's attack surface and require rigorous downstream verification.
 
----
+#### 3. Enforce the Zero-Trust Redirection Constraint (The Headless Workload Rule)
+*   **Configuration Element:** Redirect URI (Optional)
+*   **Engineering Decision:** **Leave this field entirely blank.**
+*   **Architectural Logic:** A Redirect URI (Reply URL) is used exclusively for interactive, human-facing web applications or native mobile apps that require an authorization code exchange via a web browser. Because workload identity federation is designed for completely non-human, headless, automated background processes (such as automated CI/CD runners or backend microservices), configuring a Redirect URI introduces unnecessary configuration drift and violates the principle of least privilege.
+
+#### 4. Capture and Document the Cryptographic Digital Coordinates
+Once the registration is committed, navigate directly to the application's **Overview** pane to extract the static identity coordinates:
+*   **Coordinate A: Application (Client) ID**
+    *   *Architectural Meaning:* The immutable, unique GUID that globally identifies this specific application blueprint within the Entra ID ecosystem.
+*   **Coordinate B: Object ID**
+    *   *Architectural Meaning:* The local tenant-specific identifier for the application object.
+*   *Operational Execution:* Copy the `Application (Client) ID` to your engineering scratchpad alongside the Phase 1 coordinates. This coordinate will serve as the exact username/client identifier that your external automation platform passes during the cross-platform federated authentication handshake.
+
+
+
+
 
 ## Phase 3: Building the Passwordless Trust Link (Federated OIDC)
 
