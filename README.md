@@ -47,7 +47,17 @@ The universal relationship established in Phase 1 always moves through three dis
 2. **Declaration of the Target Perimeter:** You locate and isolate the specific sub-boundary or logical container within the infrastructure environment (the subscription, account, project, or namespace) where the resource lives.
 3. **Coordinate Extraction for Core Alignment:** You extract the precise cross-platform tenant and scope variables. This creates the foundational network and logical alignment required before any cryptographic handshake or permission assignment can be attempted.
 
-`
+Phase 1: Administrative Boundary Discovery
+Step 1.1: Locate the Identity Center Coordinate
+Administrative Sphere: Microsoft Entra ID Admin Center
+Action: Log into the master directory and copy the unique identifier for your identity environment.
+Extracted Variable: Directory (Tenant) ID
+Step 1.2: Locate the Modular Infrastructure Target Coordinate
+Administrative Sphere: Target Infrastructure Console (Already established)
+Action: Log into the external data platform hosting the workload and copy the unique identifier for that specific resource boundary.
+Extracted Variable: Target Scope ID (e.g., Azure Subscription ID, AWS Account ID, GCP Project ID, Kubernetes Namespace, or Vector DB Endpoint)
+
+
   
 ## Phase 2: Generating Identity Credentials & Digital Coordinates
 
