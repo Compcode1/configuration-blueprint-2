@@ -47,44 +47,28 @@ The universal relationship established in Phase 1 always moves through three dis
 2. **Declaration of the Target Perimeter:** You locate and isolate the specific sub-boundary or logical container within the infrastructure environment (the subscription, account, project, or namespace) where the resource lives.
 3. **Coordinate Extraction for Core Alignment:** You extract the precise cross-platform tenant and scope variables. This creates the foundational network and logical alignment required before any cryptographic handshake or permission assignment can be attempted.
 
-graph TD
-    %% Define Styles
-    classDef immutable fill:#1f4e79,stroke:#000,stroke-width:2px,color:#fff;
-    classDef modular fill:#2e75b6,stroke:#000,stroke-width:2px,color:#fff;
-    classDef route fill:#f2f2f2,stroke:#333,stroke-width:1px,color:#333;
+### Foundational Architectural Mapping: Control Room Boundaries
 
-    %% Create Identity Center Box
-    subgraph ID_Center [IDENTITY CONTROL CENTER]
-        Tenant[Microsoft Entra ID Tenant]
-        Var1[Target Variable: Directory Tenant ID]
-        Tenant --> Var1
-    end
-    class ID_Center immutable;
-    class Tenant immutable;
-    class Var1 immutable;
+**[CONTROL ROOM A] THE IDENTITY CENTER (Global & Immutable)**
+*   **System Platform:** Microsoft Entra ID
+*   **Administrative Scope:** The Azure Active Directory Tenant
+*   **Operational Mandate:** Acts as the root authority for cross-platform trust. It handles all inbound cryptographic validations and issues short-lived Access Tokens (AT).
+*   **Key Identity Coordinate:** `Directory (Tenant) ID`
 
-    %% Create Infrastructure Box
-    subgraph Infra_Room [INFRASTRUCTURE CONTROL ROOM]
-        Direction[Select and Isolate Target Data Perimeter]
-        
-        Choice1[Choice 1: Azure Subscription ID]
-        Choice2[Choice 2: AWS Account ID]
-        Choice3[Choice 3: GCP Project ID]
-        Choice4[Choice 4: Kubernetes Cluster Namespace]
-        Choice5[Choice 5: Third-Party Vector DB Endpoint]
-        
-        Var2[Target Variable: Target Scope ID]
-        
-        Direction --> Choice1 & Choice2 & Choice3 & Choice4 & Choice5
-        Choice1 & Choice2 & Choice3 & Choice4 & Choice5 --> Var2
-    end
-    class Infra_Room modular;
-    class Direction modular;
-    class Choice1,Choice2,Choice3,Choice4,Choice5 modular;
-    class Var2 modular;
+         ||
+         ||  [ CROSS-PLATFORM ROUTING LINK ]
+         \/
 
-    %% Connect the two rooms
-    Var1 ====> |Cross-Platform Alignment Route| Var2
+**[CONTROL ROOM B] THE INFRASTRUCTURE TARGET (Modular & Swappable)**
+*   **System Platforms (Select One):**
+    *   *Option 1:* Microsoft Azure ➔ `Subscription ID`
+    *   *Option 2:* Amazon Web Services (AWS) ➔ `AWS Account ID`
+    *   *Option 3:* Google Cloud Platform (GCP) ➔ `GCP Project ID`
+    *   *Option 4:* On-Premises Kubernetes Cluster ➔ `Cluster Namespace`
+    *   *Option 5:* Third-Party Vector Database ➔ `Database API Endpoint`
+*   **Administrative Scope:** Isolated Resource Container / Target Data Plane
+*   **Operational Mandate:** Enforces localized permissions and access policies. It checks incoming tokens and decides if the identity can read, write, or get data.
+*   **Key Infrastructure Coordinate:** `Target Scope ID`
   
 ## Phase 2: Generating Identity Credentials & Digital Coordinates
 
